@@ -1,0 +1,99 @@
+ <script src="http://apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+ <script src="http://code.jquery.com/jquery-latest.js"></script>
+
+<script type="text/javascript">
+$(function() {
+	$("#checkAll").click(function(){
+		var allvalue=document.getElementsByName('subBox');
+	for (var i=0;i<allvalue.length;i++) {
+		if (allvalue[i].type=="checkbox")
+			allvalue[i].checked=this.checked;       //遍历所有的复选框，设置为主checkbox属性
+	}
+});
+var $subBox=$("input[name='subBox']");
+$subBox.click(function(){   //点击subBox,将主checkbox设置为false
+	$("#checkAll").attr("checked",$subBox.length == $("input[name='subBox']:checked").length ? true : false);
+});
+
+});
+
+
+
+
+function GetCkboxValues() {
+	var arr = new Array() //保存所有用户的hostnmae
+	$("input:checkbox:checked").each(function() {   
+	arr.push($(this).val())   //获取当前元素的值
+})  	
+if (arr ==""){
+    alert("请选择至少一台主机")
+}
+$.ajax({
+	type:"GET",
+	url:"/delselect",
+	data:"arr="+arr,
+	success: function(msg) {
+		$("#queryByIP").click()
+	}
+});
+};
+
+
+</script>
+{% extends 'index.html' %}
+{% block page-content %}
+<h1 class="page-header">主机管理</h1>
+<form action="/server_manager" method="GET" role="form">
+<div class="form-inline"> 
+	<label class="control-label">IP：&nbsp</label><input class="form-control" type="id" placeholder="输入IP"/>
+	<input type="submit" id="queryByIP" value="查询" class="btn btn-default"/> &nbsp&nbsp 
+	<a class="btn btn-primary" href='/addserver/'>添加</a>&nbsp&nbsp
+	<a class="btn btn-primary" onclick="GetCkboxValues()">删除</a>
+</div>
+</form>
+<br>
+<hr>
+
+<div class="table-responsive">
+<form action method='post'>
+<table class="table">
+<thead>
+ <tr>
+    <th><input type="checkbox" id="checkAll" value=""/><th>
+    <th>主机名</th>
+
+    <th>IP</th>
+    <th>端口</th>
+    <th>操作系统</th>
+    <th>IDC</th>
+    <th>操作</th>
+ </tr>
+</thead>
+<tbody>
+{% for s in servers_list%}
+ <tr>
+    <th><input type="checkbox" name="subBox" value="{{s.ip}}" /><th>
+    <td>{{s.hostname}}</td>
+    <td>{{s.ip}}</td>
+    <td>{{s.port}}</td>
+    <td>{{s.os}}</td>
+    <td>{{s.idc}}</td>
+    <td><a class="btn btn-block btn-xs" href=''>更改</a></td>
+    <td><a class="btn btn-block btn-xs" href="/delete?ip={{s.ip}}">删除</a></td>
+         </tr>
+	{%endfor %}
+      </tbody>
+   </table>
+ </form>
+<p>
+        {% if servers_list.has_previous %}
+                <a href="?page={{ servers_list.previous_page_number }}">上一页</a>
+	{% endif %}
+	{% if servers_list.has_next %}
+		<a href="?page={{servers_list.next_page_number}}">下一页</a>
+	{%endif%}
+</p>
+</div>
+
+
+{% endblock %}
