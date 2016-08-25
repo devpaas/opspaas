@@ -11,6 +11,8 @@ class Servers(models.Model):
 	idc=models.CharField(max_length=20,null=True,blank=True)     #blank=True表示表单可以为空
 	port=models.IntegerField(default='22')
 	os=models.CharField(max_length=20,default='linux',verbose_name='Operating System')  #verbose_name自述名
+	user=models.CharField(max_length=20,default='root',verbose_name='manage user')
+	passwd=models.CharField(max_length=20,verbose_name='manage passwd')
 	is_checked=models.BooleanField(default=False)
 	def __unicode__(self):
 		return self.hostname
@@ -18,4 +20,8 @@ class Servers(models.Model):
 		return self.idc
 		return self.port
 		return self.os
+		return self.user
+		return self.passwd
 	
+class UserInfo(models.Model):
+	username=models.CharField(max_length=10)

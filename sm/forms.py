@@ -1,7 +1,7 @@
 #coding:utf-8
 from django import forms
 
-class AddForm(forms.Form):
+class ServerForm(forms.Form):
 	hostname=forms.CharField(
 		max_length=15,
 		required=True,
@@ -24,6 +24,18 @@ class AddForm(forms.Form):
 		required=True,
 		error_messages={'required':u'必选项'},
 		)
+	user=forms.CharField(
+		max_length=15,
+		label="用户名",
+		required=True,
+		error_messages={'required':u'必选项'},
+		)
+	passwd=forms.CharField(
+		max_length=15,
+		label="密码",
+		required=True,
+		error_messages={'required':u'必选项'},
+		)
 	idc=forms.CharField(
 		max_length=15,
 		required=False,
@@ -33,5 +45,7 @@ class AddForm(forms.Form):
 		if not self.is_valid():
 			raise forms.ValidationError(u"红的标记部分为必选项")
 		else:
-			cleaned_data=super(AddForm,self).clean()
+			cleaned_data=super(ServerForm,self).clean()
 		return cleaned_data	
+
+

@@ -1,0 +1,134 @@
+
+{% extends 'index.html' %}
+{% block page-content %}
+<h1 class="page-header">主机管理</h1>
+<form action="{% url 'queryIP' %}" method="GET" role="form">        <!-- 查询提交给表单处理 -->
+<div class="form-inline"> 
+	<label class="control-label">IP：&nbsp</label><input class="form-control" type="text" name="ip" placeholder="输入IP"/>
+	<input type="submit" id="queryById" value="查询" class="btn btn-default"/> &nbsp&nbsp
+	<a class="btn btn-primary" href="{% url 'addserver' %}">添加</a>&nbsp&nbsp
+	<a class="btn btn-primary" onclick="GetCkboxValues()" type="submit">删除</a>
+</div>
+</form>
+<br>
+<hr>
+
+<div class="table-responsive">
+<form action method='post' id="host_form" action="">
+<table class="table" id="tab-1">
+<thead>
+ <tr>
+    <th><input type="checkbox" name="subBoxall" id="subBoxall" value="" onclick="check_all('host_form')"/><th>
+
+    <th>主机名</th>
+    <th>IP</th>
+    <th>端口</th>
+    <th>操作系统</th>
+    <th>用户</th>
+    <th>密码</th>
+    <th>IDC</th>
+    <th>操作</th>
+ </tr>
+</thead>
+<tbody>
+{% for s in servers_list%}
+ <tr>
+    <th name="id" value="{{s.id}}"><input type="checkbox" name="id" value="{{s.id}}" /><th>
+    <td>{{s.hostname}}</td>
+    <td>{{s.ip}}</td>
+    <td>{{s.port}}</td>
+    <td>{{s.os}}</td>
+    <td>{{s.user}}</td>
+    <td>{{s.passwd}}</td>
+    <td>{{s.idc}}</td>
+    <td><a class="btn btn-block btn-xs" href='/sm/edit_server?id={{ s.id }}'>编辑</a></td>
+    <td><a class="btn btn-block btn-xs" href="/sm/del_server?ip={{s.ip}}">删除</a></td>
+         </tr>
+	{%endfor%}
+      </tbody>
+   </table>
+ </form>
+<p>
+    {% if servers_list.has_previous %}
+        <a href="?page={{ servers_list.previous_page_number}}">上一页</a>
+    {% endif %}
+    第{{servers_list.number}}页 | 共{{ servers_list.paginator.num_pages }}页
+    {% if servers_list.has_next %}
+        <a href="?page={{ servers_list.next_page_number }}">下一页</a>
+    {% endif %}
+
+</p>
+</div>
+
+<script type="text/javascript">
+
+/*  jquery的全选的实现方式
+$(document).ready(function(){
+    $('#subBoxall').click(function(){
+        var checked = !!$(this).prop('checked');
+        $("input[name='id']").prop('checked', checked);
+    });
+
+});
+*/
+
+//原生js实现全选复选
+var checked=false;
+function check_all(form) {
+    var checkboxes = document.getElementById(form);
+    if (checked == false) {
+        checked = true
+    } else {
+        checked = false
+    }
+    for (var i = 0; i < checkboxes.elements.length; i++) {
+        if (checkboxes.elements[i].type == "checkbox") {
+            checkboxes.elements[i].checked = checked;
+        }
+    }
+}
+
+//批量删除jquery实现
+function GetCkboxValues(){
+    var ids = $("input[name='id']:checked");   //选出被选中的复选框
+    var vals = $(ids).map(function(){return $(this).val();}).get().join(',');   //遍历复选框的值，并数组转换为字符串
+    $.ajax({
+        'type':'POST',
+        'url':'batch_del',
+        'data':{
+            'ids':vals,             //发送至服务器的key和value
+        },
+        //'error':
+        'success':function(){
+             ids.closest('tr').remove();
+        }
+    });
+}
+
+
+function QueryIP(){
+    var Qip=document.getElementById('qip').value;
+
+    $.ajax({
+        'type':'GET',
+        'url':'queryIP',
+        'data': {
+            'ip':Qip,
+         },
+        'success':function(){
+         qip.closest('tr').remove();
+        }
+    });
+};
+
+
+
+</script>
+
+
+
+{% endblock %}
+
+
+
+

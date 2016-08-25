@@ -1,3 +1,4 @@
+#coding:utf-8
 """
 Django settings for devopsWeb project.
 
@@ -37,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app01'
+    'app01',
+    'sm',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -55,7 +57,7 @@ ROOT_URLCONF = 'devopsWeb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,"templates")],   #1.9以后的写法
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,6 +70,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'devopsWeb.wsgi.application'
 
 
@@ -76,8 +79,8 @@ WSGI_APPLICATION = 'devopsWeb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'opendps',
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'opspaas',
 	'USER':'root',
 	'PASSWORD':'root',
 	'HOST':'localhost',
